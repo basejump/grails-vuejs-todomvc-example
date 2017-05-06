@@ -2,6 +2,7 @@
 Vue.js with Grails using the TodoMVC example
 
 ## Phase 1 - Stock Vuejs front end
+https://github.com/basejump/grails-vue-todomvc/tree/Phase1-vue-init-webpack
 
 ``` bash
 $ vue init webpack vue-app
@@ -32,3 +33,6 @@ $ vue init webpack vue-app
 now npm run dev should work
 
 
+## Phase 2 - TodoMVC files
+
+Copy setup from https://vuejs.org/v2/examples/todomvc.html
