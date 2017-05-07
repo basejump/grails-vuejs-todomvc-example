@@ -1,26 +1,11 @@
 import Vue from 'vue'
+import todoApi from './todoRestApi'
 
 import '../node_modules/todomvc-app-css/index.css'
-// import './styles/styles.scss';
+// import './styles/styles.scss'
 
 // Full spec-compliant TodoMVC with localStorage persistence
 // and hash-based routing in ~120 effective lines of JavaScript.
-
-// localStorage persistence
-var STORAGE_KEY = 'todos-vuejs-2.0'
-var todoStorage = {
-  fetch: function () {
-    var todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-    todos.forEach(function (todo, index) {
-      todo.id = index
-    })
-    todoStorage.uid = todos.length
-    return todos
-  },
-  save: function (todos) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
-  }
-}
 
 // visibility filters
 var filters = {
@@ -43,7 +28,7 @@ var filters = {
 var app = new Vue({
   // app initial state
   data: {
-    todos: todoStorage.fetch(),
+    todos: [],
     newTodo: '',
     editedTodo: null,
     visibility: 'all'
@@ -53,7 +38,7 @@ var app = new Vue({
   watch: {
     todos: {
       handler: function (todos) {
-        todoStorage.save(todos)
+        console.log("changed", todos)
       },
       deep: true
     }
@@ -76,6 +61,7 @@ var app = new Vue({
         this.todos.forEach(function (todo) {
           todo.completed = value
         })
+        todoApi.updateAll(this.todos)
       }
     }
   },
@@ -94,15 +80,17 @@ var app = new Vue({
       if (!value) {
         return
       }
-      this.todos.push({
-        id: todoStorage.uid++,
+      var newTodoObj = {
         title: value,
         completed: false
-      })
+      }
+      todoApi.save(newTodoObj)
+      this.todos.push(newTodoObj)
       this.newTodo = ''
     },
 
     removeTodo: function (todo) {
+      todoApi.delete(todo)
       this.todos.splice(this.todos.indexOf(todo), 1)
     },
 
@@ -119,6 +107,8 @@ var app = new Vue({
       todo.title = todo.title.trim()
       if (!todo.title) {
         this.removeTodo(todo)
+      } else {
+        todoApi.update(todo)
       }
     },
 
@@ -128,7 +118,12 @@ var app = new Vue({
     },
 
     removeCompleted: function () {
-      this.todos = filters.active(this.todos)
+      todoApi.archiveCompleted(this.todos)
+    },
+
+    setCompleted: function(todo) {
+      todo.completed = !todo.completed
+      todoApi.update(todo)
     }
   },
 
@@ -141,6 +136,11 @@ var app = new Vue({
         el.focus()
       }
     }
+  },
+
+  created: function() {
+    console.log("Ready")
+    todoApi.list(this.todos)
   }
 })
 
