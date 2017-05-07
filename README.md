@@ -30,9 +30,18 @@ $ vue init webpack vue-app
    Documentation can be found at https://vuejs-templates.github.io/webpack
 ```
 
-now npm run dev should work
+now npm run dev should work and show the todo with local browser storage
 
 
 ## Phase 2 - TodoMVC files
+https://github.com/basejump/grails-vue-todomvc/tree/Phase2-todomvc-example-copy
 
 Copy setup from https://vuejs.org/v2/examples/todomvc.html
+
+## Phase 3 - Stock Grails Rest Application
+
+``` bash
+$ grails create-app -profile rest-api -features hibernate5 grails-server
+
+| Grails Version: 3.2.9
+```
