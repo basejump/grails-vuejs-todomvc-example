@@ -14,6 +14,8 @@ grails:
             # Whether to translate GORM events into Reactor events
             # Disabled by default for performance reasons
             events: false
+    cors:
+        enabled: true
 info:
     app:
         name: '@info.app.name@'
