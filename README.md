@@ -1,10 +1,21 @@
-<p align="center"><img src="https://cloud.githubusercontent.com/assets/187726/25786548/f88e486c-335c-11e7-8af0-8a7c470e4112.png" width="300"></p>
+<p align="center"><img src="https://cloud.githubusercontent.com/assets/187726/25786548/f88e486c-335c-11e7-8af0-8a7c470e4112.png" width="350"></p>
 
-# Overview
+<!-- MarkdownTOC autolink="true" bracket="round" -->
 
-Takes the Vue.js TodoMVC example and modifies it to use a Grails app to store the data.
-TodoMVC examples from http://todomvc.com/
-Uses this one for a base https://vuejs.org/v2/examples/todomvc.html
+- [Overview](#overview)
+- [Phase 1 - Stock Vuejs front end](#phase-1---stock-vuejs-front-end)
+- [Phase 2 - TodoMVC files](#phase-2---todomvc-files)
+- [Phase 3 - Stock Grails Rest Application](#phase-3---stock-grails-rest-application)
+- [Phase 4 - Grails Todo Rest Setup](#phase-4---grails-todo-rest-setup)
+- [Phase 5 - Vue TodoMVC modifications for rest model](#phase-5---vue-todomvc-modifications-for-rest-model)
+
+<!-- /MarkdownTOC -->
+
+## Overview
+
+Takes the Vue.js TodoMVC example and modifies it to use a [Grails](https://grails.org/) app to store the data.
+TodoMVC examples from the poc site http://todomvc.com/
+We use this one as a basis for the code https://vuejs.org/v2/examples/todomvc.html
 
 ## Phase 1 - Stock Vuejs front end
 https://github.com/basejump/grails-vue-todomvc/tree/Phase1-vue-init-webpack
@@ -41,14 +52,15 @@ now npm run dev should work and show the todo with local browser storage
 
 
 ## Phase 2 - TodoMVC files
-https://github.com/basejump/grails-vue-todomvc/tree/Phase2-todomvc-example-copy
+[see github tag phase2-todomvc-example-copy](https://github.com/basejump/grails-vue-todomvc/tree/Phase2-todomvc-example-copy)
 
-Copy code from https://vuejs.org/v2/examples/todomvc.html according to commits. 
+Copy code from https://vuejs.org/v2/examples/todomvc.html according to these [commits](https://github.com/basejump/grails-vue-todomvc/commit/e44c9aaa33b2d639a034ce95688e3235607b857c). 
 
 `npm run dev` and check it out
 
 ## Phase 3 - Stock Grails Rest Application
-https://github.com/basejump/grails-vue-todomvc/tree/Phase3-Stock-Grails-Rest-App
+[github tag Phase3-Stock-Grails-Rest-App](https://github.com/basejump/grails-vue-todomvc/tree/Phase3-Stock-Grails-Rest-App)
+
 
 ``` bash
 $ grails create-app -profile rest-api -features hibernate5 grails-server
@@ -57,7 +69,7 @@ $ grails create-app -profile rest-api -features hibernate5 grails-server
 ```
 
 ## Phase 4 - Grails Todo Rest Setup
-see this [commit](https://github.com/basejump/grails-vue-todomvc/commit/2c252c176a8ffbe411883a661eb9d504a83a5ca1) for a walk through of the changes made
+see [this commit](https://github.com/basejump/grails-vue-todomvc/commit/2c252c176a8ffbe411883a661eb9d504a83a5ca1) for a walk through of the changes made
 
 create the Todo domain
 
