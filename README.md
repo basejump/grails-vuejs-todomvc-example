@@ -1,4 +1,4 @@
-<p align="center"><img src="https://cloud.githubusercontent.com/assets/187726/25786548/f88e486c-335c-11e7-8af0-8a7c470e4112.png" width="350"></p>
+<img align="right" src="https://cloud.githubusercontent.com/assets/187726/25786548/f88e486c-335c-11e7-8af0-8a7c470e4112.png" width="350">
 
 <!-- MarkdownTOC autolink="true" bracket="round" -->
 
