@@ -1,14 +1,16 @@
 import Vue from 'vue'
+import VueRouter from 'vue-router';
 import TodoModel from './todoModel'
 
 import '../node_modules/todomvc-app-css/index.css'
 // import './styles/styles.scss'
+Vue.use(VueRouter)
 
 // Full spec-compliant TodoMVC with localStorage persistence
 // and hash-based routing in ~120 effective lines of JavaScript.
 
 // visibility filters
-var filters = {
+const filters = {
   all: function (todos) {
     return todos
   },
@@ -24,8 +26,15 @@ var filters = {
   }
 }
 
+const router = new VueRouter({
+  routes: [
+    {path: '/:filterBy'} //no component is needed, just want $route.params
+  ]
+})
+
 // app Vue instance
 var app = new Vue({
+  router,
   // app initial state
   data: {
     todos: [],
@@ -42,6 +51,10 @@ var app = new Vue({
         console.log("changed", todos)
       },
       deep: true
+    },
+    '$route': function () {
+      console.log('filterBy', this.$route.params.filterBy)
+      this.visibility = this.$route.params.filterBy
     }
   },
 
@@ -142,22 +155,10 @@ var app = new Vue({
   created: function() {
     console.log("Ready")
     this.todos = TodoModel.query()
+    console.log('filterBy', this.$route.params.filterBy)
+    if(this.$route.params.filterBy) this.visibility = this.$route.params.filterBy
   }
 })
-
-// handle routing
-function onHashChange () {
-  var visibility = window.location.hash.replace(/#\/?/, '')
-  if (filters[visibility]) {
-    app.visibility = visibility
-  } else {
-    window.location.hash = ''
-    app.visibility = 'all'
-  }
-}
-
-window.addEventListener('hashchange', onHashChange)
-onHashChange()
 
 // mount
 app.$mount('.todoapp')

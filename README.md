@@ -9,6 +9,7 @@
 - [Phase 4 - Grails Todo Rest Setup](#phase-4---grails-todo-rest-setup)
 - [Phase 5 - Vue TodoMVC modifications for rest model](#phase-5---vue-todomvc-modifications-for-rest-model)
 - [Phase 6 - Use v-model axios rest wrapper. Add error checking](#phase-6---use-v-model-axios-rest-wrapper-add-error-checking)
+- [Phase 7 - vue-router](#phase-7---vue-router)
 
 <!-- /MarkdownTOC -->
 
@@ -164,6 +165,16 @@ Date: Sun, 07 May 2017 06:01:57 GMT
 6. `grails run-app` under the grail-server dir. In another shell window cd to vue-app and run 'npm run dev'
 
 Try creating a todo with _xxx_ as the title or modifying an existing one. 
+
+## Phase 7 - vue-router
+[see this commit for changes](https://github.com/basejump/grails-vuejs-todomvc-example/commit/b657f26b2eb6a580171bb634795916990a5f1862) 
+
+[vue-router](https://router.vuejs.org/en/) provide route and url view mapping. We were taking the url and parsing it with `function onHashChange ()` and `window.addEventListener('hashchange', onHashChange)`. We have `<a>` links to change the url for the filters on [all,active,completed]. The event listener bascially took the url when it changed from `http://localhost:8090/#/` to `http://localhost:8090/#/completed` and parse off the 'completed' part which is used to then propogate a refilter by setting `this.visibility`. [vue-router](https://router.vuejs.org/en/) is the stadard way of dealing with what to do when the url changes. Should already be installed.
+
+
+1. Refactor index.html to use router-link
+
+2. Update main.js per commits to add the router. The docs were light on this as most examples talked about how to tie the routes to the componenets to show. Turns out its optional and we can use the `$router` var that get injected into the Vue. 
 
 
 
