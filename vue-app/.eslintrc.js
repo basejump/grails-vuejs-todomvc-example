@@ -18,7 +18,7 @@ module.exports = {
   // add your custom rules here
   'rules': {
     'spaced-comment': 0,
-    'quotes':0, "space-before-function-paren":0,
+    'quotes':0, 'space-before-function-paren':0, 'semi':0,
     // allow paren-less arrow functions
     'arrow-parens': 0,
     // allow async-await

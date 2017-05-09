@@ -12,6 +12,7 @@
     <section class="todoapp">
       <header class="header">
         <h1>todos</h1>
+        <div v-show="errors.message" style="padding:5px;border:1px solid orange; color:#c4641b"><p>{{ errors.message }}</p></div>
         <input class="new-todo"
           autofocus autocomplete="off"
           placeholder="What needs to be done?"

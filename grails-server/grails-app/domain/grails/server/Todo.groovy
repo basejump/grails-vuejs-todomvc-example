@@ -10,7 +10,7 @@ class Todo {
 	Boolean archived = false
 
     static constraints = {
-    	title nullable: false
+    	title nullable: false, notEqual: "xxx"
     	completed nullable: false
     	archived nullable: false
     }

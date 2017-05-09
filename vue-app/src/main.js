@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import todoApi from './todoRestApi'
+import TodoModel from './todoModel'
 
 import '../node_modules/todomvc-app-css/index.css'
 // import './styles/styles.scss'
@@ -31,7 +31,8 @@ var app = new Vue({
     todos: [],
     newTodo: '',
     editedTodo: null,
-    visibility: 'all'
+    visibility: 'all',
+    errors: TodoModel.errors
   },
 
   // watch todos change for localStorage persistence
@@ -61,7 +62,7 @@ var app = new Vue({
         this.todos.forEach(function (todo) {
           todo.completed = value
         })
-        todoApi.updateAll(this.todos)
+        TodoModel.updateAll(this.todos)
       }
     }
   },
@@ -76,21 +77,25 @@ var app = new Vue({
   // note there's no DOM manipulation here at all.
   methods: {
     addTodo: function () {
+      let self = this
+
       var value = this.newTodo && this.newTodo.trim()
       if (!value) {
         return
       }
-      var newTodoObj = {
-        title: value,
-        completed: false
-      }
-      todoApi.save(newTodoObj)
-      this.todos.push(newTodoObj)
-      this.newTodo = ''
-    },
 
+      let newTodoObj = TodoModel.save({
+        title: value
+      })
+
+      newTodoObj.$promise.then(function (response) {
+        self.todos.push(newTodoObj)
+        console.log("addTodo ", newTodoObj)
+        self.newTodo = ''
+      })
+    },
     removeTodo: function (todo) {
-      todoApi.delete(todo)
+      todo.$delete()
       this.todos.splice(this.todos.indexOf(todo), 1)
     },
 
@@ -108,7 +113,10 @@ var app = new Vue({
       if (!todo.title) {
         this.removeTodo(todo)
       } else {
-        todoApi.update(todo)
+        let self = this
+        todo.$update().catch(function (ex) {
+          self.editedTodo = todo //reset it back so input doesn't go away
+        })
       }
     },
 
@@ -118,12 +126,12 @@ var app = new Vue({
     },
 
     removeCompleted: function () {
-      todoApi.archiveCompleted(this.todos)
+      TodoModel.archiveCompleted(this.todos)
     },
 
     setCompleted: function(todo) {
       todo.completed = !todo.completed
-      todoApi.update(todo)
+      todo.$update()
     }
   },
 
@@ -140,7 +148,8 @@ var app = new Vue({
 
   created: function() {
     console.log("Ready")
-    todoApi.list(this.todos)
+    this.todos = TodoModel.query()
+    //TodoModel.list(this.todos)
   }
 })
 
