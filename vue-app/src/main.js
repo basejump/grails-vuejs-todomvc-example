@@ -77,8 +77,6 @@ var app = new Vue({
   // note there's no DOM manipulation here at all.
   methods: {
     addTodo: function () {
-      let self = this
-
       var value = this.newTodo && this.newTodo.trim()
       if (!value) {
         return
@@ -88,15 +86,16 @@ var app = new Vue({
         title: value
       })
 
-      newTodoObj.$promise.then(function (response) {
-        self.todos.push(newTodoObj)
+      newTodoObj.$promise.then(resp => {
+        this.todos.push(newTodoObj)
         console.log("addTodo ", newTodoObj)
-        self.newTodo = ''
+        this.newTodo = ''
       })
     },
     removeTodo: function (todo) {
-      todo.$delete()
-      this.todos.splice(this.todos.indexOf(todo), 1)
+      todo.$delete().then(resp => {
+        this.todos.splice(this.todos.indexOf(todo), 1)
+      })
     },
 
     editTodo: function (todo) {
@@ -113,9 +112,8 @@ var app = new Vue({
       if (!todo.title) {
         this.removeTodo(todo)
       } else {
-        let self = this
-        todo.$update().catch(function (ex) {
-          self.editedTodo = todo //reset it back so input doesn't go away
+        todo.$update().catch(ex => {
+          this.editedTodo = todo //reset it back so input doesn't go away
         })
       }
     },
@@ -127,11 +125,6 @@ var app = new Vue({
 
     removeCompleted: function () {
       TodoModel.archiveCompleted(this.todos)
-    },
-
-    setCompleted: function(todo) {
-      todo.completed = !todo.completed
-      todo.$update()
     }
   },
 
@@ -149,7 +142,6 @@ var app = new Vue({
   created: function() {
     console.log("Ready")
     this.todos = TodoModel.query()
-    //TodoModel.list(this.todos)
   }
 })
 

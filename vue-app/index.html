@@ -28,7 +28,7 @@
             :key="todo.id"
             :class="{ completed: todo.completed, editing: todo == editedTodo }">
             <div class="view">
-              <input class="toggle" type="checkbox" :checked="todo.completed" @click="setCompleted(todo)" >
+              <input class="toggle" type="checkbox" :checked="todo.completed" @click="todo.$toggleCompleted()" >
               <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
               <button class="destroy" @click="removeTodo(todo)"></button>
             </div>
