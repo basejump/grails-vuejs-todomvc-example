@@ -8,6 +8,7 @@
 - [Phase 3 - Stock Grails Rest Application](#phase-3---stock-grails-rest-application)
 - [Phase 4 - Grails Todo Rest Setup](#phase-4---grails-todo-rest-setup)
 - [Phase 5 - Vue TodoMVC modifications for rest model](#phase-5---vue-todomvc-modifications-for-rest-model)
+- [Phase 6 - Use v-model axios rest wrapper. Add error checking](#phase-6---use-v-model-axios-rest-wrapper-add-error-checking)
 
 <!-- /MarkdownTOC -->
 
@@ -141,6 +142,28 @@ Date: Sun, 07 May 2017 06:01:57 GMT
 5. Make minor tweak to the complete check box to use even for save
 
 5. `grails run-app` under the grail-server dir. In another shell window cd to vue-app and run 'npm run dev'
+
+## Phase 6 - Use v-model axios rest wrapper. Add error checking
+<img align="right" src="https://cloud.githubusercontent.com/assets/187726/25831513/519da1be-342a-11e7-8292-d723f152c0af.png" width="300">
+
+[see this commit for changes](https://github.com/basejump/grails-vuejs-todomvc-example/commit/b657f26b2eb6a580171bb634795916990a5f1862) 
+
+[vmodel](https://github.com/laoshu133/v-model) is a light weight wrapper around [axios](https://github.com/mzabriskie/axios) that allows you to use it more like ngResource and will even look somewhat similiar to Gorm/Grails activerecord way of working with items. While it says its for Vue, vue is not required and [axios](https://github.com/mzabriskie/axios) is all thats needed and since its [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) based API it will uses [bluebird](http://bluebirdjs.com/docs/getting-started.html) as well.
+
+
+1. `npm install v-model --save` or modify package.json per example and run npm install
+
+2. added todoModel.js to replace the axios based todoRestApi from phase 5 
+
+3. modified main.js to use todoModel and the [vmodel](https://github.com/laoshu133/v-model) Model based methods
+
+4. Add some error checking with `catch` and a div in index.html to diplay errors
+
+5. Modify the Todo domain in grails so we can simulate an error by creaating an item with 'xxx'
+
+6. `grails run-app` under the grail-server dir. In another shell window cd to vue-app and run 'npm run dev'
+
+Try creating a todo with _xxx_ as the title or modifying an existing one. 
 
 
 
