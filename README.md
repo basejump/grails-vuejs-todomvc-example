@@ -167,7 +167,7 @@ Date: Sun, 07 May 2017 06:01:57 GMT
 Try creating a todo with _xxx_ as the title or modifying an existing one. 
 
 ## Phase 7 - vue-router
-[see this commit for changes](https://github.com/basejump/grails-vuejs-todomvc-example/commit/b657f26b2eb6a580171bb634795916990a5f1862) 
+see [this commit](https://github.com/basejump/grails-vuejs-todomvc-example/commit/ae8ded8344ad8e4be2217d6f2d9cb1448c317d06) for relevant changes.
 
 [vue-router](https://router.vuejs.org/en/) provide route and url view mapping. We were taking the url and parsing it with `function onHashChange ()` and `window.addEventListener('hashchange', onHashChange)`. We have `<a>` links to change the url for the filters on [all,active,completed]. The event listener bascially took the url when it changed from `http://localhost:8090/#/` to `http://localhost:8090/#/completed` and parse off the 'completed' part which is used to then propogate a refilter by setting `this.visibility`. [vue-router](https://router.vuejs.org/en/) is the stadard way of dealing with what to do when the url changes. Should already be installed.
 

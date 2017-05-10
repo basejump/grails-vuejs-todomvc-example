@@ -11,19 +11,9 @@ Vue.use(VueRouter)
 
 // visibility filters
 const filters = {
-  all: function (todos) {
-    return todos
-  },
-  active: function (todos) {
-    return todos.filter(function (todo) {
-      return !todo.completed
-    })
-  },
-  completed: function (todos) {
-    return todos.filter(function (todo) {
-      return todo.completed
-    })
-  }
+  all: todos => todos,
+  active: todos => todos.filter(todo => !todo.completed),
+  completed: todos => todos.filter(todo => todo.completed)
 }
 
 const router = new VueRouter({
@@ -155,7 +145,7 @@ var app = new Vue({
   created: function() {
     console.log("Ready")
     this.todos = TodoModel.query()
-    console.log('filterBy', this.$route.params.filterBy)
+    //ensures its properly set
     if(this.$route.params.filterBy) this.visibility = this.$route.params.filterBy
   }
 })
