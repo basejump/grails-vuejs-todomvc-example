@@ -1,6 +1,8 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router';
-import TodoModel from './todoModel'
+import VueRouter from 'vue-router'
+import { mapMutations, mapActions, mapState } from 'vuex'
+import { cloneDeep, isEmpty } from 'lodash'
+import store from './store'
 
 import '../node_modules/todomvc-app-css/index.css'
 // import './styles/styles.scss'
@@ -18,30 +20,22 @@ const filters = {
 
 const router = new VueRouter({
   routes: [
-    {path: '/:filterBy'} //no component is needed, just want $route.params
+    {path: '/:filterBy'} //normally we have a component but its not required, just want $route.params
   ]
 })
 
 // app Vue instance
 var app = new Vue({
+  store,
   router,
   // app initial state
   data: {
-    todos: [],
-    newTodo: '',
-    editedTodo: null,
-    visibility: 'all',
-    errors: TodoModel.errors
+    editingTodo: {},
+    visibility: 'all'
   },
 
   // watch todos change for localStorage persistence
   watch: {
-    todos: {
-      handler: function (todos) {
-        console.log("changed", todos)
-      },
-      deep: true
-    },
     '$route': function () {
       console.log('filterBy', this.$route.params.filterBy)
       this.visibility = this.$route.params.filterBy
@@ -51,22 +45,21 @@ var app = new Vue({
   // computed properties
   // http://vuejs.org/guide/computed.html
   computed: {
-    filteredTodos: function () {
+    ...mapState([
+      'activeItem',
+      'errors'
+    ]),
+    todos () {
+      return this.$store.state.items
+    },
+    allChecked () {
+      return this.todos.every(todo => todo.completed)
+    },
+    filteredTodos () {
       return filters[this.visibility](this.todos)
     },
-    remaining: function () {
-      return filters.active(this.todos).length
-    },
-    allDone: {
-      get: function () {
-        return this.remaining === 0
-      },
-      set: function (value) {
-        this.todos.forEach(function (todo) {
-          todo.completed = value
-        })
-        TodoModel.updateAll(this.todos)
-      }
+    remaining () {
+      return this.todos.filter(todo => !todo.completed).length
     }
   },
 
@@ -79,55 +72,51 @@ var app = new Vue({
   // methods that implement data logic.
   // note there's no DOM manipulation here at all.
   methods: {
-    addTodo: function () {
-      var value = this.newTodo && this.newTodo.trim()
-      if (!value) {
-        return
+    ...mapMutations([
+      '$updateErrors',
+      '$setActiveItem'
+    ]),
+    ...mapActions([
+      'insert',
+      'update',
+      'remove',
+      'removeCompleted',
+      'toggleAll',
+      'toggleCompleted'
+    ]),
+    addTodo (e) {
+      if(!e.target.value.trim()) return
+
+      let newTodo = {
+        title: e.target.value.trim(),
+        completed: false
       }
 
-      let newTodoObj = TodoModel.save({
-        title: value
-      })
-
-      newTodoObj.$promise.then(resp => {
-        this.todos.push(newTodoObj)
-        console.log("addTodo ", newTodoObj)
-        this.newTodo = ''
+      this.insert(newTodo).then(() => {
+        e.target.value = ''
       })
     },
-    removeTodo: function (todo) {
-      todo.$delete().then(resp => {
-        this.todos.splice(this.todos.indexOf(todo), 1)
+    editTodo(todo) {
+      this.editingTodo = cloneDeep(todo)
+      this.$setActiveItem(todo)
+      //this.$store.commit('SET_ACTIVE_ITEM', todo) //<- could be dont like this too
+      console.log("editTodo activeItem", this.activeItem)
+    },
+    doneEdit () {
+      const {editingTodo, activeItem} = this
+      console.log("doneEdit", editingTodo)
+      if (isEmpty(activeItem)) return //prevents the other events from firing
+
+      this.update({ item: activeItem, changes: editingTodo }).then(() => {
+        this.resetEdit()
+      }).catch(e => {
+        console.log("doneEdit error", e)
       })
     },
-
-    editTodo: function (todo) {
-      this.beforeEditCache = todo.title
-      this.editedTodo = todo
-    },
-
-    doneEdit: function (todo) {
-      if (!this.editedTodo) {
-        return
-      }
-      this.editedTodo = null
-      todo.title = todo.title.trim()
-      if (!todo.title) {
-        this.removeTodo(todo)
-      } else {
-        todo.$update().catch(ex => {
-          this.editedTodo = todo //reset it back so input doesn't go away
-        })
-      }
-    },
-
-    cancelEdit: function (todo) {
-      this.editedTodo = null
-      todo.title = this.beforeEditCache
-    },
-
-    removeCompleted: function () {
-      TodoModel.archiveCompleted(this.todos)
+    resetEdit (todo, e) {
+      this.editingTodo = {}
+      this.$setActiveItem({})
+      this.$updateErrors({ message: '' })
     }
   },
 
@@ -144,7 +133,7 @@ var app = new Vue({
 
   created: function() {
     console.log("Ready")
-    this.todos = TodoModel.query()
+    this.$store.dispatch('list')
     //ensures its properly set
     if(this.$route.params.filterBy) this.visibility = this.$route.params.filterBy
   }
