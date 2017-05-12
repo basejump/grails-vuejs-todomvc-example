@@ -9,6 +9,7 @@ Vue.use(Model)
 const TodoModel = Model.extend('/todo/:id')
 
 Object.assign(TodoModel, {
+  store: null
   errors: {
     message: ''
   },

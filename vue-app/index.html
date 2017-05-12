@@ -5,13 +5,27 @@
     <title>vue-todomvc</title>
     <style type="text/css">
       [v-cloak] { display: none; }
+      .store-menu{
+        margin-top: 20px;
+      }
+      .store-menu .filters li a{
+        color: #070b48;
+        background-color: #e5e7f3;
+        font-size: 16px;
+      }
     </style>
   </head>
   <body>
-    
-    <section class="todoapp">
+    <section id="switcharoo" class="footer store-menu" >
+        <ul class="filters">
+          <li><a href="#" class="selected" @click="showLocalStore()">Use Local Storage</a></li>
+          <li><a href="#" class="selected" @click="showRestStore()">Use Rest API</a></li>
+        </ul>
+    </section>
+
+    <section class="todoapp" v-cloak>
       <header class="header">
-        <h1>todos</h1>
+        <h1>vuex todos</h1>
         <div v-show="errors.message" style="padding:5px;border:1px solid orange; color:#c4641b"><p>{{ errors.message }}</p></div>
         <input class="new-todo"
           autofocus autocomplete="off"
@@ -19,8 +33,8 @@
           @keyup.enter="addTodo">
       </header>
 
-      <section class="main" v-show="todos.length" v-cloak>
-        <input class="toggle-all" type="checkbox" 
+      <section class="main" v-show="todos.length" >
+        <input class="toggle-all" type="checkbox"
           :checked="allChecked"
           @change="toggleAll({ completed: !allChecked })">
         <ul class="todo-list">
@@ -29,7 +43,7 @@
             :key="todo.id"
             :class="{ completed: todo.completed, editing: todo == activeItem }">
             <div class="view">
-              <input class="toggle" type="checkbox" :checked="todo.completed" 
+              <input class="toggle" type="checkbox" :checked="todo.completed"
                 @click="toggleCompleted({todo, completed: !todo.completed})" >
               <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
               <button class="destroy" @click="remove(todo)"></button>
@@ -57,7 +71,7 @@
           Clear completed
         </button>
       </footer>
-      
+
     </section>
     <footer class="info">
       <p>Double-click to edit a todo</p>

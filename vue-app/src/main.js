@@ -2,7 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { mapMutations, mapActions, mapState } from 'vuex'
 import { cloneDeep, isEmpty } from 'lodash'
-import store from './store'
+import { localStore, restStore } from './store'
+//import { localStore } from './store'
 
 import '../node_modules/todomvc-app-css/index.css'
 // import './styles/styles.scss'
@@ -25,13 +26,16 @@ const router = new VueRouter({
 })
 
 // app Vue instance
-var app = new Vue({
-  store,
+var RestApp = Vue.extend({
+//new Vue({
+//  store: localStore,
   router,
   // app initial state
-  data: {
-    editingTodo: {},
-    visibility: 'all'
+  data() {
+    return {
+      editingTodo: {},
+      visibility: 'all'
+    }
   },
 
   // watch todos change for localStorage persistence
@@ -99,21 +103,20 @@ var app = new Vue({
     editTodo(todo) {
       this.editingTodo = cloneDeep(todo)
       this.$setActiveItem(todo)
-      //this.$store.commit('SET_ACTIVE_ITEM', todo) //<- could be dont like this too
       console.log("editTodo activeItem", this.activeItem)
     },
     doneEdit () {
       const {editingTodo, activeItem} = this
-      console.log("doneEdit", editingTodo)
       if (isEmpty(activeItem)) return //prevents the other events from firing
-
       this.update({ item: activeItem, changes: editingTodo }).then(() => {
+        console.log("doneEdit success", {editingTodo, activeItem})
         this.resetEdit()
       }).catch(e => {
         console.log("doneEdit error", e)
       })
     },
     resetEdit (todo, e) {
+      console.log("resetEdit", e)
       this.editingTodo = {}
       this.$setActiveItem({})
       this.$updateErrors({ message: '' })
@@ -137,7 +140,22 @@ var app = new Vue({
     //ensures its properly set
     if(this.$route.params.filterBy) this.visibility = this.$route.params.filterBy
   }
-})
+})//.$mount('.todoapp')
+
+let locApp = new RestApp({ store: localStore })
+let restApp = new RestApp({ store: restStore })
+
+new Vue({
+  el: '#switcharoo',
+  methods: {
+    showRestStore() {
+      restApp.$mount('.todoapp')
+    },
+    showLocalStore() {
+      locApp.$mount('.todoapp')
+    }
+  }
+}).$mount('#switcharoo')
 
 // mount
-app.$mount('.todoapp')
+
