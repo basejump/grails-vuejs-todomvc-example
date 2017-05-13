@@ -16,16 +16,23 @@
     </style>
   </head>
   <body>
-    <section id="switcharoo" class="footer store-menu" >
-        <ul class="filters">
-          <li><a href="#" class="selected" @click="showLocalStore()">Use Local Storage</a></li>
-          <li><a href="#" class="selected" @click="showRestStore()">Use Rest API</a></li>
-        </ul>
-    </section>
 
+    <div id="switcharoo">
+      <section  class="footer store-menu" >
+          <ul class="filters">
+            <li><a href="#" class="selected" @click="showLocalStore()">Show Local Storage</a></li>
+            <li><a href="#" class="selected" @click="showRestStore()">Show Rest API</a></li>
+          </ul>
+      </section>
+      <div v-show="showName === 'rest'"><div id="todoapp-rest"></div></div>
+      <div v-show="showName === 'local'"><div id="todoapp-local"></div></div>
+    </div>
+
+    <script type="text/x-template" id="todoapp-tpl">
+    <div>
     <section class="todoapp" v-cloak>
       <header class="header">
-        <h1>vuex todos</h1>
+        <h1>{{name}} todos</h1>
         <div v-show="errors.message" style="padding:5px;border:1px solid orange; color:#c4641b"><p>{{ errors.message }}</p></div>
         <input class="new-todo"
           autofocus autocomplete="off"
@@ -73,6 +80,9 @@
       </footer>
 
     </section>
+    </div>
+
+    </script>
     <footer class="info">
       <p>Double-click to edit a todo</p>
       <p>Written by <a href="http://evanyou.me">Evan You</a></p>

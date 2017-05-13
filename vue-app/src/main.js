@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { mapMutations, mapActions, mapState } from 'vuex'
-import { cloneDeep, isEmpty } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
+import isEmpty from 'lodash/isEmpty'
 import { localStore, restStore } from './store'
 //import { localStore } from './store'
 
@@ -29,20 +30,22 @@ const router = new VueRouter({
 var RestApp = Vue.extend({
 //new Vue({
 //  store: localStore,
+  template: "#todoapp-tpl",
   router,
   // app initial state
   data() {
     return {
       editingTodo: {},
-      visibility: 'all'
+      visibility: 'all',
+      name: ''
     }
   },
 
-  // watch todos change for localStorage persistence
+  // watch route changes for localStorage persistence
   watch: {
     '$route': function () {
-      console.log('filterBy', this.$route.params.filterBy)
-      this.visibility = this.$route.params.filterBy
+      console.log('filterBy ', this.$route.params.filterBy)
+      this.visibility = this.$route.params.filterBy || 'all'
     }
   },
 
@@ -54,12 +57,13 @@ var RestApp = Vue.extend({
       'errors'
     ]),
     todos () {
-      return this.$store.state.items
+      return this.$store.state.items ? this.$store.state.items : []
     },
     allChecked () {
       return this.todos.every(todo => todo.completed)
     },
     filteredTodos () {
+      console.log(`filteredTodos visibility [${this.visibility}]`)
       return filters[this.visibility](this.todos)
     },
     remaining () {
@@ -139,20 +143,27 @@ var RestApp = Vue.extend({
     this.$store.dispatch('list')
     //ensures its properly set
     if(this.$route.params.filterBy) this.visibility = this.$route.params.filterBy
+    console.log("this.$route.params.filterBy ", this.$route.params.filterBy)
   }
 })//.$mount('.todoapp')
 
-let locApp = new RestApp({ store: localStore })
-let restApp = new RestApp({ store: restStore })
-
+function setupVue(name, store) {
+  if(document.getElementById(`todoapp-${name}`)) {
+    let rv = new RestApp({ el: `#todoapp-${name}`, store })
+    rv.name = name
+  }
+}
 new Vue({
   el: '#switcharoo',
+  data: {showName: ''},
   methods: {
     showRestStore() {
-      restApp.$mount('.todoapp')
+      this.showName = 'rest'
+      setupVue(this.showName, restStore)
     },
     showLocalStore() {
-      locApp.$mount('.todoapp')
+      this.showName = 'local'
+      setupVue(this.showName, localStore)
     }
   }
 }).$mount('#switcharoo')
