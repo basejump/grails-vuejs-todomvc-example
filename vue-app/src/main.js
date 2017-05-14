@@ -37,7 +37,7 @@ var RestApp = Vue.extend({
     return {
       editingTodo: {},
       visibility: 'all',
-      name: ''
+      name: 'local'
     }
   },
 
@@ -147,24 +147,28 @@ var RestApp = Vue.extend({
   }
 })//.$mount('.todoapp')
 
+let rv = null
 function setupVue(name, store) {
   if(document.getElementById(`todoapp-${name}`)) {
-    let rv = new RestApp({ el: `#todoapp-${name}`, store })
+    rv = new RestApp({ el: `#todoapp-${name}`, store })
     rv.name = name
   }
 }
 new Vue({
   el: '#switcharoo',
-  data: {showName: ''},
+  data: {showList: 'local'},
   methods: {
     showRestStore() {
-      this.showName = 'rest'
-      setupVue(this.showName, restStore)
+      this.showList = 'rest'
+      setupVue(this.showList, restStore)
     },
     showLocalStore() {
-      this.showName = 'local'
-      setupVue(this.showName, localStore)
+      this.showList = 'local'
     }
+  },
+  mounted() {
+    //show the local store by default
+    setupVue(this.showList, localStore)
   }
 }).$mount('#switcharoo')
 

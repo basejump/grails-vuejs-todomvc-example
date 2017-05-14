@@ -62,7 +62,7 @@ export const actions = {
   },
   list ({ commit }) {
     return RestApi.get(`todo`).then(response => {
-      commit('$setItems', response.data)
+      commit('$SetItems', response.data)
     })
   },
   toggleCompleted ({ state, dispatch }, { todo, completed }) {

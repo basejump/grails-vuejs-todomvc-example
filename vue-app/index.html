@@ -20,12 +20,12 @@
     <div id="switcharoo">
       <section  class="footer store-menu" >
           <ul class="filters">
-            <li><a href="#" class="selected" @click="showLocalStore()">Show Local Storage</a></li>
-            <li><a href="#" class="selected" @click="showRestStore()">Show Rest API</a></li>
+            <li><a href="#" class="selected" v-show="showList != 'local'" @click="showLocalStore()">Show Local Storage</a></li>
+            <li><a href="#" class="selected" v-show="showList != 'rest'" @click="showRestStore()">Show Rest API</a></li>
           </ul>
       </section>
-      <div v-show="showName === 'rest'"><div id="todoapp-rest"></div></div>
-      <div v-show="showName === 'local'"><div id="todoapp-local"></div></div>
+      <div v-show="showList === 'rest'"><div id="todoapp-rest"></div></div>
+      <div v-show="showList === 'local'"><div id="todoapp-local"></div></div>
     </div>
 
     <script type="text/x-template" id="todoapp-tpl">

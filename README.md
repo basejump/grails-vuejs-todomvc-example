@@ -13,6 +13,8 @@
 - [Phase 8 - vuex](#phase-8---vuex)
 - [Refs](#refs)
   - [examples TodoMVC inspiration](#examples-todomvc-inspiration)
+  - [Admin Dashobards](#admin-dashobards)
+  - [Testing](#testing)
 
 <!-- /MarkdownTOC -->
 
@@ -210,6 +212,16 @@ See this [branch](https://github.com/basejump/grails-vuejs-todomvc-example/tree/
 super simple https://github.com/addyosmani/vue-cli-todomvc
 older but has components examples and test examples https://github.com/allenmyao/vuejs-todomvc/tree/master/src
 vuex example with JSX, also shows SCSS style use https://github.com/codingcampbell/todomvc-vue
+
+### Admin Dashobards
+front end comparison https://docs.google.com/spreadsheets/d/13WhGNOu9S207TmhkL4xhCHV0tlDg-rCzR0VeaspS8QQ/edit#gid=541415243
+https://quasar-admin.firebaseapp.com/#/
+https://github.com/prograhammer/example-vue-project
+
+### Testing
+https://www.coding123.org/mock-vuex-in-vue-unit-tests/
+https://alligator.io/vuejs/testing-vuex-vue/
+
 
 [Vuex]: https://vuex.vuejs.org/en/
 [axios]: https://github.com/mzabriskie/axios

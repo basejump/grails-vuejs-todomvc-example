@@ -15,7 +15,7 @@ const state = function() {
 }
 
 const mutations = {
-  $setItems (state, items) {
+  $SetItems (state, items) {
     state.items = items
   },
 
