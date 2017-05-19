@@ -1,15 +1,16 @@
+/*eslint no-unused-vars: 0*/
 import Vue from 'vue'
-import VueRouter from 'vue-router';
-import TodoModel from './todoModel'
+import VueRouter from 'vue-router'
+import _isEmpty from 'lodash/isEmpty'
+import _cloneDeep from 'lodash/cloneDeep'
+import todoLocalStore from './store/todoLocalStore'
+import todoRestStore from './store/todoRestStore'
+import {mapStoreFunctions, addStoreProp} from './store/shared/helpers'
+Vue.use(VueRouter)
 
 import '../node_modules/todomvc-app-css/index.css'
 // import './styles/styles.scss'
-Vue.use(VueRouter)
 
-// Full spec-compliant TodoMVC with localStorage persistence
-// and hash-based routing in ~120 effective lines of JavaScript.
-
-// visibility filters
 const filters = {
   all: todos => todos,
   active: todos => todos.filter(todo => !todo.completed),
@@ -18,137 +19,115 @@ const filters = {
 
 const router = new VueRouter({
   routes: [
-    {path: '/:filterBy'} //no component is needed, just want $route.params
+    { path: '/:filterBy' } //normally we have a component but its not required, just want $route.params
   ]
 })
 
-// app Vue instance
-var app = new Vue({
+// app Vue class using extend to see we can reuse it
+let TodoBaseVue = Vue.extend({
+  template: "#todoapp-tpl",
   router,
   // app initial state
-  data: {
-    todos: [],
-    newTodo: '',
-    editedTodo: null,
-    visibility: 'all',
-    errors: TodoModel.errors
+  data () {
+    return {
+      editingTodo: {},
+      visibility: 'all',
+      name: 'local' // just the name that is shown on header list
+      // state: this.$store.state  //<= can tie in the state data right here but is set in class creation components below
+    }
   },
 
-  // watch todos change for localStorage persistence
+  // watch route property for changes to filter visibility
   watch: {
-    todos: {
-      handler: function (todos) {
-        console.log("changed", todos)
-      },
-      deep: true
-    },
     '$route': function () {
-      console.log('filterBy', this.$route.params.filterBy)
-      this.visibility = this.$route.params.filterBy
+      this.visibility = this.$route.params.filterBy || 'all'
     }
   },
 
-  // computed properties
-  // http://vuejs.org/guide/computed.html
   computed: {
-    filteredTodos: function () {
-      return filters[this.visibility](this.todos)
-    },
-    remaining: function () {
-      return filters.active(this.todos).length
-    },
-    allDone: {
-      get: function () {
-        return this.remaining === 0
-      },
-      set: function (value) {
-        this.todos.forEach(function (todo) {
-          todo.completed = value
-        })
-        TodoModel.updateAll(this.todos)
-      }
-    }
+    error () { return this.$store.state.error },
+    activeItem () { return this.$store.state.activeItem },
+    todos () { return this.$store.state.items },
+    allChecked () { return this.todos.every(todo => todo.completed) },
+    filteredTodos () { return filters[this.visibility](this.todos) },
+    remaining () { return this.todos.filter(todo => !todo.completed).length }
   },
 
   filters: {
-    pluralize: function (n) {
-      return n === 1 ? 'item' : 'items'
-    }
+    pluralize: n => n === 1 ? 'item' : 'items'
   },
 
-  // methods that implement data logic.
-  // note there's no DOM manipulation here at all.
+  //some methods will be added in the concrete classes below and be delegated to store
   methods: {
-    addTodo: function () {
-      var value = this.newTodo && this.newTodo.trim()
-      if (!value) {
-        return
+    addTodo (e) {
+      if(!e.target.value.trim()) return
+      let newTodo = {
+        title: e.target.value.trim(),
+        completed: false
       }
-
-      let newTodoObj = TodoModel.save({
-        title: value
-      })
-
-      newTodoObj.$promise.then(resp => {
-        this.todos.push(newTodoObj)
-        console.log("addTodo ", newTodoObj)
-        this.newTodo = ''
-      })
-    },
-    removeTodo: function (todo) {
-      todo.$delete().then(resp => {
-        this.todos.splice(this.todos.indexOf(todo), 1)
+      this.addItem(newTodo).then(() => {
+        e.target.value = ''
       })
     },
 
-    editTodo: function (todo) {
-      this.beforeEditCache = todo.title
-      this.editedTodo = todo
+    editTodo(todo) {
+      this.setActiveItem(todo)
+      this.editingTodo = _cloneDeep(todo) //clone it for editing so we don't mess with master copy
     },
+    doneEdit () {
+      const {item, changes} = {item: this.activeItem, changes: this.editingTodo}
+      if (_isEmpty(item)) return //prevents both [blur] and [enter key] events from running this, only 1 needs to run it.
 
-    doneEdit: function (todo) {
-      if (!this.editedTodo) {
-        return
-      }
-      this.editedTodo = null
-      todo.title = todo.title.trim()
-      if (!todo.title) {
-        this.removeTodo(todo)
-      } else {
-        todo.$update().catch(ex => {
-          this.editedTodo = todo //reset it back so input doesn't go away
-        })
-      }
+      this.updateItem({item, changes}).then(() => {
+        console.log("doneEdit success", {item, changes})
+        this.resetEdit()
+      })
     },
-
-    cancelEdit: function (todo) {
-      this.editedTodo = null
-      todo.title = this.beforeEditCache
-    },
-
-    removeCompleted: function () {
-      TodoModel.archiveCompleted(this.todos)
+    resetEdit (todo, e) {
+      console.log("resetEdit", e)
+      this.editingTodo = {}
+      this.setActiveItem(false)
+      this.clearErrors()
     }
   },
 
-  // a custom directive to wait for the DOM to be updated
-  // before focusing on the input field.
-  // http://vuejs.org/guide/custom-directive.html
   directives: {
-    'todo-focus': function (el, binding) {
-      if (binding.value) {
-        el.focus()
-      }
+    'todo-focus' (el, binding, { context }) {
+      if (binding.value) context.$nextTick(() => el.focus())
     }
   },
 
   created: function() {
-    console.log("Ready")
-    this.todos = TodoModel.query()
+    console.log("Ready " + this._uid)
+    this.list()
     //ensures its properly set
     if(this.$route.params.filterBy) this.visibility = this.$route.params.filterBy
   }
 })
+//add the $store getter to Vue so this.$store works, uses Vuex if present
+addStoreProp(TodoBaseVue)
 
-// mount
-app.$mount('.todoapp')
+//the list of store methods to merge in that will be delegated to the store
+let mappedMethods = mapStoreFunctions([
+  'addItem', 'updateItem', 'removeItem', 'updateAll', 'list',
+  'toggleComplete', 'removeCompleted', 'clearErrors', 'getErrorMessage', 'editActiveItem', 'setActiveItem'
+])
+
+//Vue will merge whats set here into the "component" that was create as a babse abobve
+let todoRestVue = new TodoBaseVue({
+  el: '#todoapp-rest',
+  //can do with a data function too for merge. add it to data so it gets the watchers
+  data: { state: todoRestStore.state },
+  methods: mappedMethods,
+  store: todoRestStore
+})
+todoRestVue.name = 'Rest'
+console.log("todoRestVue ", todoRestVue)
+
+let todoLocalVue = new TodoBaseVue({
+  el: '#todoapp-local',
+  methods: mappedMethods,
+  data: { state: todoLocalStore.state },
+  store: todoLocalStore
+})
+console.log("todoLocalVue ", todoLocalVue)

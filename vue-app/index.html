@@ -8,36 +8,48 @@
     </style>
   </head>
   <body>
-    
-    <section class="todoapp">
+  <style type="text/css">
+    .todoapp{ margin-top: 75px; }
+    .todoapp h1{ top: -80px; font-size: 50px; }
+  </style>
+
+    <div id="todoapp-rest"></div>
+    <div id="todoapp-local"></div>
+
+    <script type="text/x-template" id="todoapp-tpl">
+    <div>
+
+    <section class="todoapp" v-cloak>
       <header class="header">
-        <h1>todos</h1>
-        <div v-show="errors.message" style="padding:5px;border:1px solid orange; color:#c4641b"><p>{{ errors.message }}</p></div>
+        <h1>{{name}} todos</h1>
+        <div v-show="error.message" style="padding:5px;border:1px solid orange; color:#c4641b"><p>{{ error.message }}</p></div>
         <input class="new-todo"
           autofocus autocomplete="off"
           placeholder="What needs to be done?"
-          v-model="newTodo"
           @keyup.enter="addTodo">
       </header>
 
-      <section class="main" v-show="todos.length" v-cloak>
-        <input class="toggle-all" type="checkbox" v-model="allDone">
+      <section class="main" v-show="todos.length" >
+        <input class="toggle-all" type="checkbox"
+          :checked="allChecked"
+          @change="updateAll({ completed: !allChecked })">
         <ul class="todo-list">
           <li v-for="todo in filteredTodos"
             class="todo"
             :key="todo.id"
-            :class="{ completed: todo.completed, editing: todo == editedTodo }">
+            :class="{ completed: todo.completed, editing: todo == activeItem }">
             <div class="view">
-              <input class="toggle" type="checkbox" :checked="todo.completed" @click="todo.$toggleCompleted()" >
+              <input class="toggle" type="checkbox" :checked="todo.completed"
+                @click="toggleComplete(todo)" >
               <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
-              <button class="destroy" @click="removeTodo(todo)"></button>
+              <button class="destroy" @click="removeItem(todo)"></button>
             </div>
             <input class="edit" type="text"
-              v-model="todo.title"
-              v-todo-focus="todo == editedTodo"
-              @blur="doneEdit(todo)"
-              @keyup.enter="doneEdit(todo)"
-              @keyup.esc="cancelEdit(todo)">
+              v-todo-focus="todo == activeItem"
+              v-model="editingTodo.title"
+              @keyup.enter="doneEdit()"
+              @keyup.esc="resetEdit()"
+              @blur="doneEdit()">
           </li>
         </ul>
       </section>
@@ -51,12 +63,16 @@
           <li><router-link to="/active" :class="{ selected: visibility == 'active' }">Active</router-link></li>
           <li><router-link to="/completed" :class="{ selected: visibility == 'completed' }">Completed</router-link></li>
         </ul>
-        <button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">
+        <button class="clear-completed" @click="removeCompleted()" v-show="todos.length > remaining">
           Clear completed
         </button>
       </footer>
-      
+
     </section>
+
+    </div>
+    </script>
+
     <footer class="info">
       <p>Double-click to edit a todo</p>
       <p>Written by <a href="http://evanyou.me">Evan You</a></p>

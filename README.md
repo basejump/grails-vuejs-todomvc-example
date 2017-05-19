@@ -1,6 +1,6 @@
 <img align="right" src="https://cloud.githubusercontent.com/assets/187726/25786548/f88e486c-335c-11e7-8af0-8a7c470e4112.png" width="350">
 
-<!-- MarkdownTOC autolink="true" bracket="round" -->
+<!-- MarkdownTOC autolink="true" bracket="round" depth="1" -->
 
 - [Overview](#overview)
 - [Phase 1 - Stock Vuejs front end](#phase-1---stock-vuejs-front-end)
@@ -10,15 +10,16 @@
 - [Phase 5 - Vue TodoMVC modifications for rest model](#phase-5---vue-todomvc-modifications-for-rest-model)
 - [Phase 6 - Use v-model axios rest wrapper. Add error checking](#phase-6---use-v-model-axios-rest-wrapper-add-error-checking)
 - [Phase 7 - vue-router](#phase-7---vue-router)
-- [Phase 8 - vuex](#phase-8---vuex)
+- [Phase 8 - Vanilla Store](#phase-8---vanilla-store)
+- [Phase 9 - Vuex Store](#phase-9---vuex-store)
+- [Reference](#reference)
 
 <!-- /MarkdownTOC -->
 
 ## Overview
 
-Takes the [Vue].js TodoMVC example and modifies it to use a [Grails] app to store the data.
-TodoMVC examples from the poc site http://todomvc.com/
-We use this one as a basis for the code https://vuejs.org/v2/examples/todomvc.html
+This is a project I used to attemp to learn the basics of Vue. I consider one of those neccesarry basics to be how to communicate using a rest api with [Grails][]. I takes the [Vue.js][Vue] TodoMVC example and modifies it to use a [Grails] app to store the data.
+TodoMVC example initially taken from the poc site http://todomvc.com/ bubt then ended up using this one as a basis for the code https://vuejs.org/v2/examples/todomvc.html Take a look at the end of this artcle for other links and projects I used as examples and tutorials.
 
 ## Phase 1 - Stock Vuejs front end
 https://github.com/basejump/grails-vue-todomvc/tree/Phase1-vue-init-webpack
@@ -177,14 +178,18 @@ see [this commit](https://github.com/basejump/grails-vuejs-todomvc-example/commi
 
 2. Update main.js per commits to add the router. The docs were light on this as most examples talked about how to tie the routes to the componenets to show. Turns out its optional and we can use the `$router` var that get injected into the Vue.
 
+## Phase 8 - Vanilla Store
 
-## Phase 8 - vuex
+See this [branch](https://github.com/basejump/grails-vuejs-todomvc-example/tree/vanilla-store) for working example
 
-See this [branch](https://github.com/basejump/grails-vuejs-todomvc-example/tree/vuex) for working example
+* using `yarn` now, so intall yarn and just run that. must faster with caching.
+* abstract out a generic store
 
-8a - get vuex working with local storage
+## Phase 9 - Vuex Store
 
-8b - [Grails] rest storage
+See this [branch](https://github.com/basejump/grails-vuejs-todomvc-example/tree/vuex-store for working example
+
+working with both local and rest storage
 
 
 **Inspiration Articles/Docs**
@@ -197,10 +202,35 @@ See this [branch](https://github.com/basejump/grails-vuejs-todomvc-example/tree/
 **Inspiration Projects and Examples**
 
 * The [vuex example](https://github.com/vuejs/vuex/tree/dev/examples/todomvc) in the main source
+* another vuex with JSX example https://github.com/codingcampbell/todomvc-vue
 * https://github.com/christianmalek/vuex-rest-api
 * complicated project with modules (in chinese) https://github.com/jackhutu/jackblog-vue/tree/master/src/vuex
 * old but good examples https://github.com/pablohpsilva/Goal
 
+## Reference
+
+#### examples TodoMVC inspiration
+
+super simple https://github.com/addyosmani/vue-cli-todomvc
+older but has components examples and test examples https://github.com/allenmyao/vuejs-todomvc/tree/master/src
+vuex example with JSX, also shows SCSS style use https://github.com/codingcampbell/todomvc-vue
+
+#### Admin Dashobards
+front end comparison https://docs.google.com/spreadsheets/d/13WhGNOu9S207TmhkL4xhCHV0tlDg-rCzR0VeaspS8QQ/edit#gid=541415243
+https://quasar-admin.firebaseapp.com/#/
+https://github.com/prograhammer/example-vue-project
+
+#### Testing
+https://www.coding123.org/mock-vuex-in-vue-unit-tests/
+https://alligator.io/vuejs/testing-vuex-vue/
+
+#### App Structure basis
+https://github.com/Plortinus/vue-multiple-pages
+Nuxt.js
+https://github.com/prograhammer/example-vue-project
+
+#### Tutorials
+http://matthiashager.com/complete-vuejs-application-tutorial
 
 [Vuex]: https://vuex.vuejs.org/en/
 [axios]: https://github.com/mzabriskie/axios
