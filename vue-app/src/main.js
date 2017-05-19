@@ -1,11 +1,13 @@
-/*eslint no-unused-vars: 0*/
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Vuex from 'vuex'
 import _isEmpty from 'lodash/isEmpty'
 import _cloneDeep from 'lodash/cloneDeep'
 import todoLocalStore from './store/todoLocalStore'
 import todoRestStore from './store/todoRestStore'
-import {mapStoreFunctions, addStoreProp} from './store/shared/helpers'
+import {mountVxVue, mountVxRestVue} from './main-vuex'
+import {mapStoreFunctions} from './store/shared/helpers'
+Vue.use(Vuex)
 Vue.use(VueRouter)
 
 import '../node_modules/todomvc-app-css/index.css'
@@ -105,7 +107,7 @@ let TodoBaseVue = Vue.extend({
   }
 })
 //add the $store getter to Vue so this.$store works, uses Vuex if present
-addStoreProp(TodoBaseVue)
+//addStoreProp(TodoBaseVue)
 
 //the list of store methods to merge in that will be delegated to the store
 let mappedMethods = mapStoreFunctions([
@@ -131,3 +133,6 @@ let todoLocalVue = new TodoBaseVue({
   store: todoLocalStore
 })
 console.log("todoLocalVue ", todoLocalVue)
+
+mountVxVue(TodoBaseVue, '#todoapp-local-vuex')
+mountVxRestVue(TodoBaseVue, '#todoapp-rest-vuex')

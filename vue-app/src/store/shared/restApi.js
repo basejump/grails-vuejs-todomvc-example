@@ -1,6 +1,6 @@
 import axios from 'axios'
 import _merge from 'lodash/merge'
-//import _has from 'lodash/has'
+import _has from 'lodash/has'
 
 let axiosDefaults = {
   baseURL: 'http://localhost:8080/api/'
@@ -39,7 +39,7 @@ restApi.create = function(config) {
 restApi.defaultInterceptors = function(store) {
   restApi.axiosInstance.interceptors.response.use(
     response => {
-      store.clearErrors()
+      _has(store, 'clearErrors') ? store.clearErrors() : store.commit('clearErrors')
       return response
     },
     error => {
@@ -57,7 +57,7 @@ restApi.defaultInterceptors = function(store) {
         console.log('Error ', error.message);
         errMsg = error.message
       }
-      store.setErrorMessage(errMsg)
+      _has(store, 'setErrorMessage') ? store.setErrorMessage(errMsg) : store.commit('setErrorMessage', errMsg)
       return Promise.reject(error)
     }
   )

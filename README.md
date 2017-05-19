@@ -189,6 +189,8 @@ See this [branch](https://github.com/basejump/grails-vuejs-todomvc-example/tree/
 
 See this [branch](https://github.com/basejump/grails-vuejs-todomvc-example/tree/vuex-store for working example
 
+`npm -S install vuex`
+
 working with both local and rest storage
 
 
