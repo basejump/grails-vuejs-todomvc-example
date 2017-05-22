@@ -19,6 +19,8 @@ export const addStoreProp = function(vueClass) {
       //pulled from how vuex does it so it works for any store we setup
       if (options.store) {
         store = options.store
+      } else if (options.parent && options.parent.$store) {
+        store = options.parent.$store
       } else {
         store = this.$root.$options.store
       }

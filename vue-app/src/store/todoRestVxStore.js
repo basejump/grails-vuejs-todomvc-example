@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, { mapMutations, mapActions } from 'vuex'
 import itemRestVxStore from "./item/itemRestVxStore"
 Vue.use(Vuex)
 
@@ -31,6 +31,30 @@ thisStore.options = function() {
 thisStore.createStore = function(options = {}) {
   let opts = Object.assign({}, this.options(), options)
   return new Vuex.Store(opts)
+}
+
+//returns a simple vue instance just to access store methods directly on the instance.
+thisStore.createRepo = function(options = {}) {
+  let vxStore = this.createStore(options)
+  console.log("todoVxStore ", vxStore)
+  let vxMixin = {
+    methods: {
+      ...mapMutations([
+        'clearErrors', 'setActiveItem'
+      ]),
+      ...mapActions([
+        'addItem', 'updateItem', 'editActiveItem', 'toggleComplete', 'list',
+        'removeCompleted', 'removeItem', 'updateAll'
+      ])
+    },
+    computed: { state () { return this.$store.state } }
+  }
+
+  //empty vue to wrap the store with methods above so we can use it like a normal object without all the commit and store methods
+  return new Vue({
+    mixins: [vxMixin],
+    store: vxStore
+  })
 }
 
 export default thisStore

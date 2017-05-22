@@ -27,7 +27,7 @@ itemRestStore.options = function(resource) {
       await restApi.delete(item)
       commit('removeItem', item)
     },
-    async updateAll ({ dispatch, commit, state }, {item, changes}) {
+    async updateAll ({ dispatch, commit, state }, changes) {
       for(const item of state.items) {
         dispatch('updateItem', {item, changes})
       }

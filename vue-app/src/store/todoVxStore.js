@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, { mapMutations, mapActions } from 'vuex'
 import itemVxStore from "./item/itemVxStore"
 // import _merge from 'lodash/merge'
 // import _cloneDeep from 'lodash/cloneDeep'
@@ -46,6 +46,28 @@ store.options = function() {
 store.createStore = function(opts = {}) {
   let o = Object.assign({}, this.options(), opts)
   return new Vuex.Store(o)
+}
+
+store.createRepo = function(options = {}) {
+  let vxStore = this.createStore(options)
+  console.log("todoVxStore ", vxStore)
+  let vxMixin = {
+    methods: {
+      ...mapMutations([
+        'removeItem', 'updateAll', 'clearErrors', 'setActiveItem'
+      ]),
+      ...mapActions([
+        'addItem', 'updateItem', 'editActiveItem', 'toggleComplete', 'list', 'removeCompleted'
+      ])
+    },
+    computed: { state () { return this.$store.state } }
+  }
+
+  //empty vue to wrap the store with methods above so we can use it like a normal object without all the commit and store methods
+  return new Vue({
+    mixins: [vxMixin],
+    store: vxStore
+  })
 }
 
 export default store

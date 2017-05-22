@@ -8,72 +8,12 @@
     </style>
   </head>
   <body>
-  <style type="text/css">
-    .todoapp{ margin-top: 75px; }
-    .todoapp h1{ top: -80px; font-size: 50px; }
-  </style>
 
-    <div id="todoapp-rest-vuex"></div>
-    <div id="todoapp-local-vuex"></div>
-    <div id="todoapp-rest"></div>
-    <div id="todoapp-local"></div>
+    <div id="todoapp-rest-vuex"><app name="VX Rest"></app></div>
+    <div id="todoapp-local-vuex"><app name="VX Local"></app></div>
+    <div id="todoapp-rest"><app name="Rest"></app></div>
+    <div id="todoapp-local"><app name="Local"/></div>
 
-    <script type="text/x-template" id="todoapp-tpl">
-    <div>
-
-    <section class="todoapp" v-cloak>
-      <header class="header">
-        <h1>{{name}} todos</h1>
-        <div v-show="error.message" style="padding:5px;border:1px solid orange; color:#c4641b"><p>{{ error.message }}</p></div>
-        <input class="new-todo"
-          autofocus autocomplete="off"
-          placeholder="What needs to be done?"
-          @keyup.enter="addTodo">
-      </header>
-
-      <section class="main" v-show="todos.length" >
-        <input class="toggle-all" type="checkbox"
-          :checked="allChecked"
-          @change="updateAll({ completed: !allChecked })">
-        <ul class="todo-list">
-          <li v-for="todo in filteredTodos"
-            class="todo"
-            :key="todo.id"
-            :class="{ completed: todo.completed, editing: todo == activeItem }">
-            <div class="view">
-              <input class="toggle" type="checkbox" :checked="todo.completed"
-                @click="toggleComplete(todo)" >
-              <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
-              <button class="destroy" @click="removeItem(todo)"></button>
-            </div>
-            <input class="edit" type="text"
-              v-todo-focus="todo == activeItem"
-              v-model="editingTodo.title"
-              @keyup.enter="doneEdit()"
-              @keyup.esc="resetEdit()"
-              @blur="doneEdit()">
-          </li>
-        </ul>
-      </section>
-
-      <footer class="footer" v-show="todos.length" v-cloak>
-        <span class="todo-count">
-          <strong>{{ remaining }}</strong> {{ remaining | pluralize }} left
-        </span>
-        <ul class="filters">
-          <li><router-link to="/all" :class="{ selected: visibility == 'all' }">All</router-link></li>
-          <li><router-link to="/active" :class="{ selected: visibility == 'active' }">Active</router-link></li>
-          <li><router-link to="/completed" :class="{ selected: visibility == 'completed' }">Completed</router-link></li>
-        </ul>
-        <button class="clear-completed" @click="removeCompleted()" v-show="todos.length > remaining">
-          Clear completed
-        </button>
-      </footer>
-
-    </section>
-
-    </div>
-    </script>
 
     <footer class="info">
       <p>Double-click to edit a todo</p>
