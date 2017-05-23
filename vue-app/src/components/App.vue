@@ -7,6 +7,15 @@
     padding:5px;border:1px solid orange;
     color:#c4641b
   }
+  .todoapp div.filter {
+    position: absolute;
+    top: -25px;
+    width: 100%;
+    text-align: right;
+  }
+  .todoapp div.filter input {
+    font-size: 14px;
+  }
 </style>
 
 <template>
@@ -14,7 +23,7 @@
     <!-- header -->
     <header class="header">
       <h1>{{name}} todos</h1>
-      <!--div class="search"><input placeholder="search..." v-model="searchQuery"></div-->
+      <div class="filter"><input placeholder="filter..." v-model="filterVal"></div>
       <div class="errors" v-show="error.message"><p>{{ error.message }}</p></div>
       <input class="new-todo"
              autofocus autocomplete="off"
@@ -67,7 +76,8 @@
     // app initial state
     data () {
       return {
-        visibility: 'all'
+        visibility: 'all',
+        filterVal: ''
       }
     },
 
@@ -83,7 +93,17 @@
       // activeItem () { return this.$store.state.activeItem },
       todos () { return this.todoRepo.state.items },
       allChecked () { return this.todos.every(todo => todo.completed) },
-      filteredTodos () { return filters[this.visibility](this.todos) },
+      filteredTodos () {
+        let filteredData = filters[this.visibility](this.todos)
+        let filterVal = this.filterVal && this.filterVal.toLowerCase()
+        if (filterVal) {
+          filteredData = filteredData.filter(row => {
+            return row.title.toLowerCase().indexOf(filterVal) > -1
+          })
+        }
+        //console.log("filteredData", filteredData)
+        return filteredData
+      },
       remaining () { return this.todos.filter(todo => !todo.completed).length }
     },
 
